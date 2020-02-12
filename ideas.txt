@@ -1,0 +1,12 @@
+ItemTypes:
+  - Static
+  - Moving
+  - TP
+  - Starts Moving when hovered (fore a few seconds or never stops)
+  - TPs a few seconds after being hovered
+
+Perks:
+  - Reveal (for a few seconds)
+  - Blink
+  - Direction (arrow pointing at item)
+  - Distance
