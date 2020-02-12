@@ -173,7 +173,7 @@
 <svelte:window bind:innerWidth bind:innerHeight on:mousemove={setMouseState} />
 
 <main class:hover={mouseState === 0 && itemHidden} on:click={revealItem}>
-  <h1>{itemHidden ? mouseStateTxt : `Where's the bouss`}</h1>
+  <h1>{itemHidden && gameStarted ? mouseStateTxt : `Where's the bouss`}</h1>
   {#if gameStarted}
     <h2>{itemHidden ? `Trouve le bouss caché sur cette page!` : `Bravo!`}</h2>
     <h3>Score: {score}</h3>
@@ -193,7 +193,7 @@
       </div>
     {/if}
   {:else}
-    <h2>Click below to start the game</h2>
+    <h2>Clique le bouton pour jouer!</h2>
     <button on:click={startGame}>Laisser bouss se cacher</button>
   {/if}
 </main>
