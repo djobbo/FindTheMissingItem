@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import { fade, fly } from "svelte/transition";
 
+  let gameStarted = false;
+
   let items = [
     {
       name: "Bouss",
@@ -62,13 +64,32 @@
   })(mouseState);
 
   let score = 0;
+  let audioPlayers;
+  let timer;
 
-  onMount(() => {
+  function startGame() {
     randomizeItemPos();
-  });
+    audioPlayers = [
+      "./src/sounds/513_Brawl.mp3",
+      "./src/sounds/ray1.mp3",
+      "./src/sounds/ray2.mp3",
+      "./src/sounds/ray3.mp3",
+      "./src/sounds/ray4.mp3",
+      "./src/sounds/ray5.mp3"
+    ];
+    console.log(audioPlayers);
+    timer = setInterval(() => {
+      playSound();
+    }, 500);
+
+    gameStarted = true;
+  }
 
   function getRandomPos(x, y, w, h) {
-    return [Math.round(Math.random() * w + x), Math.round(Math.random() * h + y)];
+    return [
+      Math.round(Math.random() * w + x),
+      Math.round(Math.random() * h + y)
+    ];
   }
 
   function randomizeItemPos() {
@@ -99,6 +120,12 @@
     if (dist < 256) return 3;
     if (dist < 512) return 4;
     return 5;
+  }
+
+  function playSound() {
+    if (!gameStarted || !itemHidden) return;
+    console.log("play", mouseState);
+    new Audio(audioPlayers[mouseState]).play();
   }
 </script>
 
@@ -145,23 +172,28 @@
 
 <svelte:window bind:innerWidth bind:innerHeight on:mousemove={setMouseState} />
 
-<main
-  class:hover={mouseState === 0 && itemHidden}
-  on:click={revealItem}>
-	<h1>{itemHidden ? mouseStateTxt : `Where's the bouss`}</h1>
-	<h2>{ itemHidden ? `Trouve le bouss caché sur cette page!` : `Bravo!` }</h2>
-  <h3>Score: {score}</h3>
-  {#if !itemHidden}
-    <button on:click={randomizeItemPos}>Laisser bouss se cacher</button> 
-    <div
-      class="item"
-      class:itemHidden style="top: {itemPos[1] - 32}px; left: {itemPos[0] - 32}px"
-      in:fade out:fly={{ y: -200, duration: 250 }}>
-      <img
-        src="https://cdn.discordapp.com/attachments/638869924265328641/675004347641233418/unknown.png"
-        width="100%"
-        height="100%"
-        alt="item">
-    </div>
+<main class:hover={mouseState === 0 && itemHidden} on:click={revealItem}>
+  <h1>{itemHidden ? mouseStateTxt : `Where's the bouss`}</h1>
+  {#if gameStarted}
+    <h2>{itemHidden ? `Trouve le bouss caché sur cette page!` : `Bravo!`}</h2>
+    <h3>Score: {score}</h3>
+    {#if !itemHidden}
+      <button on:click={randomizeItemPos}>Laisser bouss se cacher</button>
+      <div
+        class="item"
+        class:itemHidden
+        style="top: {itemPos[1] - 32}px; left: {itemPos[0] - 32}px"
+        in:fade
+        out:fly={{ y: -200, duration: 250 }}>
+        <img
+          src="https://cdn.discordapp.com/attachments/638869924265328641/675004347641233418/unknown.png"
+          width="100%"
+          height="100%"
+          alt="item" />
+      </div>
+    {/if}
+  {:else}
+    <h2>Click below to start the game</h2>
+    <button on:click={startGame}>Laisser bouss se cacher</button>
   {/if}
 </main>
